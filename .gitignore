@@ -1,0 +1,10 @@
+*.png
+*.csv
+*.doc*
+*checkpoint*
+*.so
+*.pptx
+*pycache*
+*.vscode
+*.pdf
+
