@@ -41,8 +41,11 @@ c2 = -3
 # S_increment is used to determine whether or not the population replenishes itself
 S_increment = 0
 
-#The number of repeats is determined by the number of available cores
-repeats = min(mp.cpu_count(), 8)
+#The number of repeats
+repeats = 8
+
+#The number of available cores
+num_cpu = mp.cpu_count()
 
 # Other simulation parameters
 t_max = 100
@@ -88,11 +91,21 @@ for i, zeta in enumerate(zetas):
     t_step_counts[zeta] = {}
     processes = []
     temp_rhos = []
+    cpu_count = 0
     #Looping through our repeats and initialising a simulation for each value
     for j in range(repeats):
-        p = mp.Process(target = solB.gillespie_simulation, args = (seeds[i][j], N, starting_infecteds, beta_max, c1, c2, zeta, eta, delta, alpha, gamma, mut_chance, t_max, resolution, S_increment))
-        p.start()
-        processes.append(p)
+        if cpu_count <= num_cpu:
+            p = mp.Process(target = solB.gillespie_simulation, args = (seeds[i][j], N, starting_infecteds, beta_max, c1, c2, zeta, eta, delta, alpha, gamma, mut_chance, t_max, resolution, S_increment))
+            p.start()
+            processes.append(p)
+            cpu_count += 1
+        else:
+            for proc in processes:
+                proc.join()
+            p = mp.Process(target = solB.gillespie_simulation, args = (seeds[i][j], N, starting_infecteds, beta_max, c1, c2, zeta, eta, delta, alpha, gamma, mut_chance, t_max, resolution, S_increment))
+            p.start()
+            processes = [p]
+            cpu_count = 1
     
     #Collecting the processes to ensure all are finished before we read in the csvs
     for proc in processes:

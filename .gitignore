@@ -7,4 +7,5 @@
 *pycache*
 *.vscode
 *.pdf
-
+*.o
+*temp.linux*
