@@ -39,7 +39,7 @@ c2 = -3
 
 S_increment = 0
 
-repeats = 10
+repeats = 20
 
 t_max = 100
 
